@@ -3,13 +3,16 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
 options = Options()
+options.add_argument("--headless=new")
+options.add_experimental_option("excludeSwitches", ["enable-logging"])
 browser = webdriver.Chrome(options=options)
+
 
 def get_page_count(keyword):
     base_url = "http://kr.indeed.com/jobs?q="
     browser.get(f"{base_url}{keyword}")
     soup = BeautifulSoup(browser.page_source, "html.parser")
-    pagination = soup.find("nav", {"aria-label":"pagination"})
+    pagination = soup.find("nav", {"aria-label": "pagination"})
     if pagination == None:
         return 1
     pages = pagination.find_all("div", recursive=False)
@@ -18,6 +21,7 @@ def get_page_count(keyword):
         return 5
     else:
         return count
+
 
 def extract_indeed_jobs(keyword):
     pages = get_page_count(keyword)
